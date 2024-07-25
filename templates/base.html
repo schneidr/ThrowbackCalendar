@@ -10,8 +10,8 @@
     <link href="{{ url_for('static', filename='css/solid.min.css') }}" rel="stylesheet" crossorigin="" />
   </head>
   <body style="height:100vh">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg bg-primary mb-3" data-bs-theme="dark">
+        <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">ThrowbackCalendar</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -23,7 +23,7 @@
                   </li>
                   {% for month in range(1,13) %}
                   <li class="nav-item">
-                      <a class="nav-link" aria-current="page" href="{{ url_for('show_month', month=month) }}">{{ month | monthname }}</a>
+                      <a class="nav-link{% if current_month.month == month %} active{% endif %}" aria-current="page" href="{{ url_for('show_month', month=month) }}">{{ month | monthname }}</a>
                   </li>
                   {% endfor %}
                   <li class="nav-item">

@@ -5,7 +5,12 @@
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col"><h1 class="mb-3">{{ _(month_names[current_month.month]) }}</h1></div>
+        <div class="col">
+            <h1 class="mb-3">
+                {{ _(month_names[current_month.month]) }}
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal"><i class="fa-solid fa-square-plus"></i></button>
+            </h1>
+        </div>
     </div>
 <div class="row">
 {% for day in range(1, days_in_month + 1) %}
@@ -15,7 +20,11 @@
         {{ day }}
         </div>
         <ul class="list-group list-group-flush">
-
+            {% for year in events[day] %}
+            <li class="list-group-item">
+            {{ year }}
+            </li>
+            {% endfor %}
         </ul>
     </div>
 </div>
@@ -25,6 +34,67 @@
 {% endif %}
 {% endfor %}
 </div>
+
+<div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="addItemModalLabel">{{ _('New item') }}</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="{{ url_for('show_month', month=current_month.month) }}" method="POST">
+            <div class="modal-body">
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-2">
+                        <label for="day" class="col-form-label">{{ _('Day') }}</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="text" id="day" name="day" class="form-control" value="{{ current_month.day }}">
+                    </div>
+                    <div class="col-2">
+                        <label for="month" class="col-form-label">{{ _('Month') }}</label>
+                    </div>
+                    <div class="col-2">
+                        <input type="text" id="month" name="month" class="form-control" value="{{ current_month.month }}">
+                    </div>
+                    <div class="col-1">
+                        <label for="year" class="col-form-label">{{ _('Year') }}</label>
+                    </div>
+                    <div class="col-3">
+                        <input type="text" id="year" name="year" class="form-control">
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-2">
+                        <label for="name" class="col-form-label">{{ _('Name') }}</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="name" name="name" class="form-control">
+                    </div>
+                </div>
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-2">
+                        <label for="url" class="col-form-label">{{ _('URL') }} <span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="url" name="url" class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">{{ _('Description') }} <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                </div>
+                <div><span class="text-danger">*</span> {{ _('optional') }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">{{ _('Save') }}</button>
+            </div>
+        </form>
+    </div>
+    </div>
+  </div>
+  
 {% endblock %}
 </div>
 
