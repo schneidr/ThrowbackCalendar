@@ -1,9 +1,32 @@
 {% extends 'base.html' %}
 
-{% block title %}Index{% endblock %}
+{% block title %}{{ _(month_names[current_month.month]) }}{% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col"><h1 class="mb-3">{{ _(month_names[current_month.month]) }}</h1></div>
+    </div>
+<div class="row">
+{% for day in range(1, days_in_month + 1) %}
+<div class="col mb-2">
+    <div class="day card{% if day == now.day and current_month.month == now.month %} border-primary{% endif %}">
+        <div class="card-header">
+        {{ day }}
+        </div>
+        <ul class="list-group list-group-flush">
+
+        </ul>
+    </div>
+</div>
+{% if day % 7 == 0 %}
+</div>
+<div class="row">
+{% endif %}
+{% endfor %}
+</div>
 {% endblock %}
+</div>
 
 {% block scripts %}
 {% endblock %}
