@@ -35,14 +35,16 @@ db_path = "events.db"
 
 connection = sqlite3.connect(db_path)
 cursor = connection.cursor()
-cursor.execute("""
+cursor.execute(
+    """
                CREATE TABLE IF NOT EXISTS events (
                 date TEXT NOT NULL,
                 name TEXT NOT NULL,
                 url TEXT,
                 description TEXT
                )
-               """)
+               """
+)
 
 
 def add_event(date: str, name: str, url: str, description: str):
@@ -50,7 +52,7 @@ def add_event(date: str, name: str, url: str, description: str):
     cursor = connection.cursor()
     cursor.execute(
         "INSERT INTO events (date,name,url,description) VALUES (?,?,?,?)",
-        (date, name, url, description)
+        (date, name, url, description),
     )
     connection.commit()
 
@@ -60,17 +62,17 @@ def get_events(month: str) -> dict:
     cursor = connection.cursor()
     cursor.execute(
         "SELECT strftime('%d', `date`) AS day,strftime('%Y', `date`) AS year,name,url,description FROM events WHERE date LIKE ?",
-        ("%-"+month+"-%",)
+        ("%-" + month + "-%",),
     )
     results = cursor.fetchall()
     events = {}
     for item in results:
         event = {
-            "day": item[0],
-            "year": item[1],
+            "day": int(item[0]),
+            "year": int(item[1]),
             "name": item[2],
             "url": item[3],
-            "description": item[4]
+            "description": item[4],
         }
         if not event["day"] in events:
             events[event["day"]] = {}
@@ -78,7 +80,6 @@ def get_events(month: str) -> dict:
             events[event["day"]][event["year"]] = []
         events[event["day"]][event["year"]].append(event)
     return events
-        
 
 
 @app.route("/")
@@ -87,7 +88,7 @@ def index():
     return redirect(url_for("show_month", month=now.month))
 
 
-@app.route("/<int:month>", methods = ["GET", "POST"])
+@app.route("/<int:month>", methods=["GET", "POST"])
 def show_month(month: int):
     if month > 12:
         return redirect(url_for("show_month", month=1))
@@ -97,9 +98,15 @@ def show_month(month: int):
     current_month = datetime.now()
     if month != 0:
         current_month = datetime(current_month.year, month, current_month.day)
-    if request.method == 'POST':
-        date = "{0:04d}-{1:02d}-{2:02d}".format(int(request.form["year"]), int(request.form["month"]), int(request.form["day"]))
-        add_event(date, request.form["name"], request.form["url"], request.form["description"])
+    if request.method == "POST":
+        date = "{0:04d}-{1:02d}-{2:02d}".format(
+            int(request.form["year"]),
+            int(request.form["month"]),
+            int(request.form["day"]),
+        )
+        add_event(
+            date, request.form["name"], request.form["url"], request.form["description"]
+        )
     events = get_events("{0:02d}".format(current_month.month))
     days_in_month = monthrange(current_month.year, current_month.month)
     return render_template(
@@ -108,7 +115,7 @@ def show_month(month: int):
         current_month=current_month,
         days_in_month=days_in_month[1],
         month_names=month_names,
-        events=events
+        events=events,
     )
 
 
@@ -119,7 +126,7 @@ def page_not_found(error):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template("page_not_found.html"), 404
+    return "Not found", 404
 
 
 @app.template_filter("monthname")
