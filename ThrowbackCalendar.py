@@ -70,6 +70,16 @@ def update_event(
     connection.commit()
 
 
+def delete_event(id: int):
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute(
+        "DELETE FROM events WHERE rowid=?",
+        (id,),
+    )
+    connection.commit()
+
+
 def get_events(month: str) -> dict:
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
@@ -128,14 +138,17 @@ def show_month(month: int):
                 request.form["parent_url"],
             )
         else:
-            update_event(
-                int(request.form["id"]),
-                date,
-                request.form["name"],
-                request.form["url"],
-                request.form["parent_name"],
-                request.form["parent_url"],
-            )
+            if request.form["action"] == "delete":
+                delete_event(int(request.form["id"]))
+            else:
+                update_event(
+                    int(request.form["id"]),
+                    date,
+                    request.form["name"],
+                    request.form["url"],
+                    request.form["parent_name"],
+                    request.form["parent_url"],
+                )
     events = get_events("{0:02d}".format(current_month.month))
     days_in_month = monthrange(current_month.year, current_month.month)
     if current_month.month == 2:

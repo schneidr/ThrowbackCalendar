@@ -14,7 +14,7 @@
     </div>
 <div class="row">
 {% for day in range(1, days_in_month + 1) %}
-<div class="col mb-2 card-group">
+<div class="col mb-3 card-group">
     <div class="day card{% if day == now.day and current_month.month == now.month %} border-primary{% endif %}">
         <div class="card-header text-end d-flex justify-content-between ">
         <button type="button" class="btn btn-success btn-sm" onclick="newEvent({{ day }});"><i class="fa-solid fa-square-plus"></i></button> {{ day }}
@@ -118,7 +118,9 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary">{{ _('Save') }}</button>
+                <button type="button" class="btn btn-danger d-none" onclick="confirmDelete();" id="deleteButton">{{ _('Delete') }}</button>
+                <button type="submit" name="action" value="delete" class="btn btn-danger d-none" id="confirmDeleteButton">{{ _('Confirm delete') }}</button>
+                <button type="submit" name="action" value="save" class="btn btn-success" id="saveButton">{{ _('Save') }}</button>
             </div>
         </form>
     </div>
