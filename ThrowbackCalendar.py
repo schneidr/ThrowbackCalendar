@@ -119,9 +119,8 @@ def show_month(month: int):
             int(request.form["month"]),
             int(request.form["day"]),
         )
-        if "id" in request.form:
-            update_event(
-                int(request.form["id"]),
+        if request.form["id"] == "":
+            add_event(
                 date,
                 request.form["name"],
                 request.form["url"],
@@ -129,7 +128,8 @@ def show_month(month: int):
                 request.form["parent_url"],
             )
         else:
-            add_event(
+            update_event(
+                int(request.form["id"]),
                 date,
                 request.form["name"],
                 request.form["url"],
