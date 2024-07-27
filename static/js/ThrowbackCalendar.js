@@ -30,6 +30,7 @@ function editEvent(id) {
     document.getElementById('parent_url').value = event.parent_url;
     document.getElementById('deleteButton').classList.remove("d-none");
     document.getElementById('confirmDeleteButton').classList.add("d-none");
+    document.getElementById('copyButton').classList.remove("d-none");
     modal.show();
 }
 
@@ -45,7 +46,13 @@ function newEvent(day = current_day) {
     document.getElementById('parent_url').value = '';
     document.getElementById('deleteButton').classList.add("d-none");
     document.getElementById('confirmDeleteButton').classList.add("d-none");
+    document.getElementById('copyButton').classList.add("d-none");
     modal.show();
+}
+
+function copyEvent() {
+    document.getElementById('id').value = '';
+    document.getElementById('copyButton').classList.add("d-none");
 }
 
 function confirmDelete() {
