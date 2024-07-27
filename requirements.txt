@@ -1,2 +1,2 @@
-Flask
-Flask-Babel
+Flask ~= 3.0
+Flask-Babel ~= 4.0
