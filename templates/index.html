@@ -8,7 +8,7 @@
         <div class="col">
             <h1 class="mb-3">
                 {{ _(month_names[current_month.month]) }}
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal"><i class="fa-solid fa-square-plus"></i></button>
+                <button type="button" class="btn btn-success" onclick="newEvent()"><i class="fa-solid fa-square-plus"></i></button>
             </h1>
         </div>
     </div>
@@ -25,9 +25,14 @@
             <div class="fw-bold">{{ year }}</div>
             <ul class="group list-group-flush px-0">
             {% for event in events[day][year] %}
-            <li class="list-group-item d-flex justify-content-between align-items-center px-0 align-top" title="{{ event.description }}">
-                {{ event.name }}
-                {% if event.url %}<span class="text-primary"><a href="{{ event.url }}" class=""><i class="fa-solid fa-globe"></i></a></span>{% endif %}
+            <li class="list-group-item px-0 event" data-event="{{ event.id }}" data-year="{{ year }}" data-month="{{ current_month.month }}" data-day="{{ day }}">
+                <div class="d-flex justify-content-between align-items-center px-0 align-top">
+                <a href="#" onclick="editEvent({{ event.id }})" class="link-underline link-underline-opacity-0 link-underline-opacity-75-hover" data-event="{{ event.id }}" data-field="name">{{ event.name }}</a>
+                {% if event.url %}<span class="text-primary"><a href="{{ event.url }}" class="" data-event="{{ event.id }}" data-field="url"><i class="fa-solid fa-globe"></i></a></span>{% endif %}
+                </div>
+                <div>
+                {% if event.parent_url %}<small class="text-secondary">{{ _('Part of') }} <a href="{{ event.parent_url }}" class="link-secondary" data-event="{{ event.id }}" data-field="parent">{{ event.parent_name }}</a></small>{% endif %}
+                </div>
             </li>
             {% endfor %}
             </ul>
@@ -51,7 +56,8 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form action="{{ url_for('show_month', month=current_month.month) }}" method="POST">
-            <div class="modal-body">
+            <input type="hidden" name="id" id="id" value="" />
+            <div class="modal-body border-bottom">
                 <div class="row g-3 align-items-center mb-3">
                     <div class="col-2">
                         <label for="day" class="col-form-label">{{ _('Day') }}</label>
@@ -73,7 +79,7 @@
                     </div>
                 </div>
                 <div class="row g-3 align-items-center mb-3">
-                    <div class="col-2">
+                    <div class="col-4">
                         <label for="name" class="col-form-label">{{ _('Name') }}</label>
                     </div>
                     <div class="col-auto">
@@ -81,17 +87,33 @@
                     </div>
                 </div>
                 <div class="row g-3 align-items-center mb-3">
-                    <div class="col-2">
-                        <label for="url" class="col-form-label">{{ _('URL') }} <span class="text-danger">*</span></label>
+                    <div class="col-4">
+                        <label for="url" class="col-form-label">{{ _('URL') }}<span class="text-danger">*</span></label>
                     </div>
                     <div class="col-auto">
                         <input type="text" id="url" name="url" class="form-control">
                     </div>
                 </div>
-                <div class="mb-3">
-                    <label for="description" class="form-label">{{ _('Description') }} <span class="text-danger">*</span></label>
-                    <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            <div class="modal-body border-bottom">
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-4">
+                        <label for="parent_name" class="col-form-label">{{ _('Parent name') }}<span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parent_name" name="parent_name" class="form-control">
+                    </div>
                 </div>
+                <div class="row g-3 align-items-center mb-3">
+                    <div class="col-4">
+                        <label for="parent_url" class="col-form-label">{{ _('Parent URL') }}<span class="text-danger">*</span></label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="text" id="parent_url" name="parent_url" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
                 <div><span class="text-danger">*</span> {{ _('optional') }}</div>
             </div>
             <div class="modal-footer">
@@ -102,9 +124,58 @@
     </div>
     </div>
   </div>
-  
-{% endblock %}
 </div>
+{% endblock %}
 
 {% block scripts %}
+<script>
+const current_month = '{{ current_month.month }}';
+const current_day = '{{ now.day }}';
+
+function editEvent(id) {
+    let element = document.querySelector('.event[data-event="' + id + '"]');
+    let event = {
+        'id': id,
+        'year': element.dataset.year,
+        'month': element.dataset.month,
+        'day': element.dataset.day,
+        'name': element.querySelector('[data-field="name"]').textContent,
+        'url': '',
+        'parent_name': '',
+        'parent_url': ''
+    }
+    if (element.querySelector('[data-field="url"]')) {
+        event.url = element.querySelector('[data-field="url"]').getAttribute('href');
+    }
+    if (element.querySelector('[data-field="parent"]')) {
+        event.parent_name = element.querySelector('[data-field="parent"]').textContent;
+        event.parent_url = element.querySelector('[data-field="parent"]').getAttribute('href');
+    }
+    console.log(event);
+    let modalElement = document.querySelector('#addItemModal');
+    const modal = new bootstrap.Modal(modalElement, {});
+    document.getElementById('id').value = event.id;
+    document.getElementById('year').value = event.year;
+    document.getElementById('month').value = event.month;
+    document.getElementById('day').value = event.day;
+    document.getElementById('name').value = event.name;
+    document.getElementById('url').value = event.url;
+    document.getElementById('parent_name').value = event.parent_name;
+    document.getElementById('parent_url').value = event.parent_url;
+    modal.show();
+}
+
+function newEvent() {
+    const modal = new bootstrap.Modal('#addItemModal', {});
+    document.getElementById('id').value = '';
+    document.getElementById('year').value = '';
+    document.getElementById('month').value = current_month;
+    document.getElementById('day').value = current_day;
+    document.getElementById('name').value = '';
+    document.getElementById('url').value = '';
+    document.getElementById('parent_name').value = '';
+    document.getElementById('parent_url').value = '';
+    modal.show();
+}
+</script>
 {% endblock %}

@@ -41,18 +41,31 @@ cursor.execute(
                 date TEXT NOT NULL,
                 name TEXT NOT NULL,
                 url TEXT,
-                description TEXT
+                parent_name TEXT,
+                parent_url TEXT
                )
                """
 )
 
 
-def add_event(date: str, name: str, url: str, description: str):
+def add_event(date: str, name: str, url: str, parent_name: str, parent_url: str):
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     cursor.execute(
-        "INSERT INTO events (date,name,url,description) VALUES (?,?,?,?)",
-        (date, name, url, description),
+        "INSERT INTO events (date,name,url,parent_name,parent_url) VALUES (?,?,?,?,?)",
+        (date, name, url, parent_name, parent_url),
+    )
+    connection.commit()
+
+
+def update_event(
+    id: int, date: str, name: str, url: str, parent_name: str, parent_url: str
+):
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute(
+        "UPDATE events SET date=?,name=?,url=?,parent_name=?,parent_url=? WHERE rowid=?",
+        (date, name, url, parent_name, parent_url, id),
     )
     connection.commit()
 
@@ -61,18 +74,20 @@ def get_events(month: str) -> dict:
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     cursor.execute(
-        "SELECT strftime('%d', `date`) AS day,strftime('%Y', `date`) AS year,name,url,description FROM events WHERE date LIKE ?",
+        "SELECT rowid,strftime('%d', `date`) AS day,strftime('%Y', `date`) AS year,name,url,parent_name,parent_url FROM events WHERE date LIKE ?",
         ("%-" + month + "-%",),
     )
     results = cursor.fetchall()
     events = {}
     for item in results:
         event = {
-            "day": int(item[0]),
-            "year": int(item[1]),
-            "name": item[2],
-            "url": item[3],
-            "description": item[4],
+            "id": int(item[0]),
+            "day": int(item[1]),
+            "year": int(item[2]),
+            "name": item[3],
+            "url": item[4],
+            "parent_name": item[5],
+            "parent_url": item[6],
         }
         if not event["day"] in events:
             events[event["day"]] = {}
@@ -104,11 +119,27 @@ def show_month(month: int):
             int(request.form["month"]),
             int(request.form["day"]),
         )
-        add_event(
-            date, request.form["name"], request.form["url"], request.form["description"]
-        )
+        if "id" in request.form:
+            update_event(
+                int(request.form["id"]),
+                date,
+                request.form["name"],
+                request.form["url"],
+                request.form["parent_name"],
+                request.form["parent_url"],
+            )
+        else:
+            add_event(
+                date,
+                request.form["name"],
+                request.form["url"],
+                request.form["parent_name"],
+                request.form["parent_url"],
+            )
     events = get_events("{0:02d}".format(current_month.month))
     days_in_month = monthrange(current_month.year, current_month.month)
+    if current_month.month == 2:
+        days_in_month = (3, 29)
     return render_template(
         "index.html",
         now=now,
