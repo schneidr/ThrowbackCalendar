@@ -63,19 +63,19 @@
                         <label for="day" class="col-form-label">{{ _('Day') }}</label>
                     </div>
                     <div class="col-2">
-                        <input type="text" id="day" name="day" class="form-control" value="{{ current_month.day }}">
+                        <input type="text" id="day" name="day" class="form-control" value="{{ current_month.day }}" required pattern="\d{1,2}">
                     </div>
                     <div class="col-2">
                         <label for="month" class="col-form-label">{{ _('Month') }}</label>
                     </div>
                     <div class="col-2">
-                        <input type="text" id="month" name="month" class="form-control" value="{{ current_month.month }}">
+                        <input type="text" id="month" name="month" class="form-control" value="{{ current_month.month }}" required pattern="\d{1,2}">
                     </div>
                     <div class="col-1">
                         <label for="year" class="col-form-label">{{ _('Year') }}</label>
                     </div>
                     <div class="col-3">
-                        <input type="text" id="year" name="year" class="form-control">
+                        <input type="text" id="year" name="year" class="form-control" required pattern="\d{4}" placeholder="{{ now.year }}">
                     </div>
                 </div>
                 <div class="row g-3 align-items-center mb-3">
@@ -83,7 +83,7 @@
                         <label for="name" class="col-form-label">{{ _('Name') }}</label>
                     </div>
                     <div class="col-auto">
-                        <input type="text" id="name" name="name" class="form-control">
+                        <input type="text" id="name" name="name" class="form-control" required>
                     </div>
                 </div>
                 <div class="row g-3 align-items-center mb-3">
@@ -91,7 +91,7 @@
                         <label for="url" class="col-form-label">{{ _('URL') }}<span class="text-danger">*</span></label>
                     </div>
                     <div class="col-auto">
-                        <input type="text" id="url" name="url" class="form-control">
+                        <input type="url" id="url" name="url" class="form-control">
                     </div>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                         <label for="parent_url" class="col-form-label">{{ _('Parent URL') }}<span class="text-danger">*</span></label>
                     </div>
                     <div class="col-auto">
-                        <input type="text" id="parent_url" name="parent_url" class="form-control">
+                        <input type="url" id="parent_url" name="parent_url" class="form-control">
                     </div>
                 </div>
             </div>
