@@ -4,10 +4,12 @@ from flask import flash, Flask, Response
 from flask import redirect, render_template, request, session, url_for
 from flask_babel import Babel, gettext
 import sqlite3
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-# app.config.from_pyfile('settings.cfg')
-# app.secret_key = app.config['SECRET_KEY']
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 
 
 def get_locale():
