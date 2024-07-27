@@ -1,0 +1,7 @@
+.day .card-header .btn {
+    visibility: hidden;
+}
+
+.day:hover .card-header .btn {
+    visibility: visible;
+}

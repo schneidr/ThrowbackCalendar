@@ -16,8 +16,8 @@
 {% for day in range(1, days_in_month + 1) %}
 <div class="col mb-2 card-group">
     <div class="day card{% if day == now.day and current_month.month == now.month %} border-primary{% endif %}">
-        <div class="card-header text-end">
-        {{ day }}
+        <div class="card-header text-end d-flex justify-content-between ">
+        <button type="button" class="btn btn-success btn-sm" onclick="newEvent({{ day }});"><i class="fa-solid fa-square-plus"></i></button> {{ day }}
         </div>
         <ul class="list-group list-group-flush">
             {% for year in events[day] %}

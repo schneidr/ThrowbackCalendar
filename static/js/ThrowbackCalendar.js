@@ -31,12 +31,12 @@ function editEvent(id) {
     modal.show();
 }
 
-function newEvent() {
+function newEvent(day = current_day) {
     const modal = new bootstrap.Modal('#addItemModal', {});
     document.getElementById('id').value = '';
     document.getElementById('year').value = '';
     document.getElementById('month').value = current_month;
-    document.getElementById('day').value = current_day;
+    document.getElementById('day').value = day;
     document.getElementById('name').value = '';
     document.getElementById('url').value = '';
     document.getElementById('parent_name').value = '';
