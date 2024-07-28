@@ -3,9 +3,13 @@
 import bcrypt
 import getpass
 import sqlite3
+import sys
 
 email = input("Email: ")
 password = getpass.getpass("Password: ")
+password_repeated = getpass.getpass("Repeat password: ")
+if password != password_repeated:
+    sys.exit("Error: Passwords don't match")
 hashed_password = bcrypt.hashpw(bytes(password, encoding="utf-8"), bcrypt.gensalt())
 
 try:
