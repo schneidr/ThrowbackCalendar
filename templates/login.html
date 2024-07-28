@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{{ _('Login') }} - ThrowbackCalendar</title>
+        <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" crossorigin="anonymous">
+        <link href="{{ url_for('static', filename='css/fontawesome.min.css') }}" rel="stylesheet" crossorigin="" />
+        <link href="{{ url_for('static', filename='css/brands.min.css') }}" rel="stylesheet" crossorigin="" />
+        <link href="{{ url_for('static', filename='css/solid.min.css') }}" rel="stylesheet" crossorigin="" />
+        <link href="{{ url_for('static', filename='css/ThrowbackCalendar.css') }}" rel="stylesheet" crossorigin="" />
+        </head>
+    <body class="d-flex align-items-center py-4 bg-body-tertiary" style="height:100vh">
+        <main class="form-login w-100 m-auto">
+        <form action="{{ url_for('login') }}" method="POST">
+            <h1 class="h3 mb-3 fw-normal">{{ _('Login') }}</h1>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email"name="email" placeholder="name@example.com" value="{{ email }}" required>
+                <label for="email">{{ _('Email address') }}</label>
+            </div>
+             <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                <label for="password">{{ _('Password') }}</label>
+            </div>
+            <button class="btn btn-primary w-100 py-2" type="submit">{{ _('Sign in') }}</button>
+        </form>
+        </main>
+    </body>
+</html>

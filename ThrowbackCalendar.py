@@ -1,3 +1,4 @@
+import bcrypt
 from calendar import monthrange
 from datetime import datetime
 from flask import flash, Flask, Response
@@ -7,9 +8,9 @@ import sqlite3
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(
-    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
-)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+app.config.from_pyfile("settings.py")
+print(app.config)
 
 
 def get_locale():
@@ -45,6 +46,14 @@ cursor.execute(
                 url TEXT,
                 parent_name TEXT,
                 parent_url TEXT
+               )
+               """
+)
+cursor.execute(
+    """
+               CREATE TABLE IF NOT EXISTS users (
+                email TEXT UNIQUE NOT NULL,
+                password TEXT NOT NULL
                )
                """
 )
@@ -109,14 +118,33 @@ def get_events(month: str) -> dict:
     return events
 
 
+def validate_user(email: str, password: str) -> bool:
+    connection = sqlite3.connect(db_path)
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT email,password FROM users WHERE email=?",
+        (email,),
+    )
+    user = cursor.fetchone()
+    if user == None:
+        return False
+    hashed_password = str(user[1]).encode("utf-8")
+    return bcrypt.hashpw(password.encode("utf-8"), hashed_password) == hashed_password
+
+
 @app.route("/")
 def index():
+    if "user_email" not in session:
+        return redirect(url_for("login"))
     now = datetime.now()
     return redirect(url_for("show_month", month=now.month))
 
 
 @app.route("/<int:month>", methods=["GET", "POST"])
 def show_month(month: int):
+    if "user_email" not in session:
+        session["previous_url"] = url_for("show_month", month=month)
+        return redirect(url_for("login"))
     if month > 12:
         return redirect(url_for("show_month", month=1))
     if month < 1:
@@ -163,6 +191,19 @@ def show_month(month: int):
         month_names=month_names,
         events=events,
     )
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        if validate_user(request.form.get("email"), request.form.get("password")):
+            session["user_email"] = request.form.get("email")
+            if "previous_url" in session:
+                previous_url = session["previous_url"]
+                del session["previous_url"]
+                return redirect(previous_url)
+            return redirect(url_for("index"))
+    return render_template("login.html", email=request.form.get("email"))
 
 
 @app.errorhandler(401)

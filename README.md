@@ -10,6 +10,10 @@ This is a simple calendar that allows you to save events you want to remember. T
     . bin/activate
     pip install -r requirements.txt
 
+Copy `settings-example.py` to `settings.py` and set a secret in the `SECRET_KEY` variable. You can create a secret by running:
+
+    python -c 'import secrets; print(secrets.token_hex())'
+
 ### Setup production instance
 
     # inside the virtualenv
@@ -21,6 +25,19 @@ This is a simple calendar that allows you to save events you want to remember. T
 ### Start development environment
 
     flask --app ThrowbackCalendar run --debug
+
+## Add user
+
+Make sure you've started the application at least once, so the tables have been created.
+
+    $ ./add_user.py
+    Email: name@example.com
+    Password: 
+    User name@example.com added successfully.
+
+The password will not be printed.
+
+Now you can log in with the user on the application.
 
 ## Components
 

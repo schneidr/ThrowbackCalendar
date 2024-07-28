@@ -3,3 +3,4 @@ lib/
 bin/
 *.cfg
 *.db
+settings.py
