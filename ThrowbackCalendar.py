@@ -127,8 +127,8 @@ def validate_user(email: str, password: str) -> bool:
     user = cursor.fetchone()
     if user == None:
         return False
-    hashed_password = str(user[1]).encode("utf-8")
-    return bcrypt.hashpw(password.encode("utf-8"), hashed_password) == hashed_password
+    hashed_password = user[1]
+    return bcrypt.checkpw(password.encode("utf-8"), hashed_password)
 
 
 @app.route("/")
@@ -202,7 +202,7 @@ def login():
                 del session["previous_url"]
                 return redirect(previous_url)
             return redirect(url_for("index"))
-    return render_template("login.html", email=request.form.get("email"))
+    return render_template("login.html", email=request.form.get("email", ""))
 
 
 @app.errorhandler(401)
