@@ -118,10 +118,10 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('Close') }}</button>
-                <button type="button" class="btn btn-primary d-none" onclick="copyEvent();" id="copyButton">{{ _('Copy') }}</button>
+                <button type="button" class="btn btn-primary d-none" onclick="copyEvent();" id="copyButton" accesskey="c">{{ _('Copy') }}</button>
                 <button type="button" class="btn btn-danger d-none" onclick="confirmDelete();" id="deleteButton">{{ _('Delete') }}</button>
                 <button type="submit" name="action" value="delete" class="btn btn-danger d-none" id="confirmDeleteButton">{{ _('Confirm delete') }}</button>
-                <button type="submit" name="action" value="save" class="btn btn-success" id="saveButton">{{ _('Save') }}</button>
+                <button type="submit" name="action" value="save" class="btn btn-success" id="saveButton" accesskey="s">{{ _('Save') }}</button>
             </div>
         </form>
     </div>

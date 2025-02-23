@@ -94,7 +94,7 @@ def get_events(month: str) -> dict:
     connection = sqlite3.connect(db_path)
     cursor = connection.cursor()
     cursor.execute(
-        "SELECT rowid,strftime('%d', `date`) AS day,strftime('%Y', `date`) AS year,name,url,parent_name,parent_url FROM events WHERE date LIKE ?",
+        "SELECT rowid,strftime('%d', `date`) AS day,strftime('%Y', `date`) AS year,name,url,parent_name,parent_url FROM events WHERE date LIKE ? ORDER BY year DESC",
         ("%-" + month + "-%",),
     )
     results = cursor.fetchall()
